@@ -18,10 +18,10 @@ samples, guidance on mobile development, and a full API reference.
 ## 기능 확인
 
 - [x] 앱 버전 체크 / 강제 업데이트
-- [ ] url scheme
-- [ ] webview 기본 제어 / javascript interface 통신
+- [x] url scheme
+- [x] webview 기본 제어 / javascript interface 통신
 
 ## 구현
-
+- https://github.com/flutter/codelabs/tree/master
 - https://www.boostcourse.org/mo316
 - https://www.boostcourse.org/mo326

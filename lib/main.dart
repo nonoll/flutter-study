@@ -8,11 +8,53 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:confirm_dialog/confirm_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:webview_flutter/webview_flutter.dart';
+import 'menu.dart';
+import 'navigation_controls.dart';
+import 'web_view_stack.dart';
+
 void main() {
   // Be sure to add this line if `PackageInfo.fromPlatform()` is called before runApp()
   // WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(const MyApp());
+  runApp(
+    const MaterialApp(
+      home: WebViewApp(),
+    ),
+  );
+  // runApp(const MyApp());
+}
+
+class WebViewApp extends StatefulWidget {
+  const WebViewApp({Key? key}) : super(key: key);
+
+  @override
+  State<WebViewApp> createState() => _WebViewAppState();
+}
+
+class _WebViewAppState extends State<WebViewApp> {
+  final controller = Completer<WebViewController>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Flutter WebView'),
+        // Add from here ...
+        actions: [
+          NavigationControls(controller: controller),
+          Menu(controller: controller),
+        ],
+        // ... to here.
+      ),
+      body: Stack(
+        children: [
+          WebViewStack(controller: controller),
+          // const MyHomePage(title: 'PackageInfo example app'),
+        ]
+      )
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {
