@@ -12,16 +12,27 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'menu.dart';
 import 'navigation_controls.dart';
 import 'web_view_stack.dart';
+import 'cupertino/cupertino_app.dart';
+
+import 'package:provider/provider.dart';
+import 'model/app_state_model.dart';
 
 void main() {
   // Be sure to add this line if `PackageInfo.fromPlatform()` is called before runApp()
   // WidgetsFlutterBinding.ensureInitialized();
 
   runApp(
-    const MaterialApp(
-      home: WebViewApp(),
+    ChangeNotifierProvider<AppStateModel>(
+      create: (_) => AppStateModel()..loadProducts(),
+      child: const CupertinoStoreApp(),
     ),
   );
+
+  // runApp(
+  //   const MaterialApp(
+  //     home: WebViewApp(),
+  //   ),
+  // );
   // runApp(const MyApp());
 }
 
