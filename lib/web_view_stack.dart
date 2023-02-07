@@ -54,7 +54,8 @@ class _WebViewStackState extends State<WebViewStack> {
             return NavigationDecision.navigate;
           },
           javascriptMode: JavascriptMode.unrestricted,
-          javascriptChannels: _createJavascriptChannels(context),  // Add this line
+          javascriptChannels: _createJavascriptChannels(context),
+          debuggingEnabled: true, // inspect 허용
         ),
         if (loadingPercentage < 100)
           LinearProgressIndicator(

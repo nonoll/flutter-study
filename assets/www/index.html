@@ -15,6 +15,23 @@ found in the LICENSE file. -->
     string using the <a href="https://pub.dev/packages/webview_flutter">Flutter
     webview</a> plugin.
 </p>
+<button id="btn">inject window.htmlScript</button>
 
+<script>
+    ;(function(win, doc) {
+        var btn = doc.querySelector('#btn');
+
+        btn.addEventListener('click', function() {
+            if (win.htmlScript) {
+                alert('이미 주입되었습니다.');
+                return;
+            }
+
+            win.htmlScript = function() {
+                console.log('htmlScript', arguments);
+            };
+        });
+    })(window, document);
+</script>
 </body>
 </html>

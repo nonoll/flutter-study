@@ -17,6 +17,7 @@ enum _MenuOptions {
   loadFlutterAsset,
   loadLocalFile,
   loadHtmlString,
+  callHtmlScript
 }
 
 const String kExamplePage = '''
@@ -97,7 +98,6 @@ req.send();''');
               case _MenuOptions.removeCookie:
                 _onRemoveCookie(controller.data!);
                 break;
-            // Add from here ...
               case _MenuOptions.loadFlutterAsset:
                 _onLoadFlutterAssetExample(controller.data!, context);
                 break;
@@ -107,7 +107,15 @@ req.send();''');
               case _MenuOptions.loadHtmlString:
                 _onLoadHtmlStringExample(controller.data!, context);
                 break;
-            // ... to here.
+              case _MenuOptions.callHtmlScript:
+                controller.data!.runJavascript('''
+try {
+  window.htmlScript('Test');
+} catch (e) {
+  console.log('e', e);
+}
+''');
+                break;
             }
           },
           itemBuilder: (context) =>
@@ -157,7 +165,10 @@ req.send();''');
               value: _MenuOptions.loadLocalFile,
               child: Text('Load local file'),
             ),
-            // ... to here.
+            const PopupMenuItem<_MenuOptions>(
+              value: _MenuOptions.callHtmlScript,
+              child: Text('Call Html Script'),
+            )
           ],
         );
       },
