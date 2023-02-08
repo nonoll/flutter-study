@@ -1,22 +1,38 @@
-import 'dart:io';
+import 'dart:async';
+import 'dart:io' show Platform, exit;
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:confirm_dialog/confirm_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class SettingsTab extends StatefulWidget {
-  const SettingsTab({super.key});
+class MyMaterialApp extends StatelessWidget {
+  const MyMaterialApp({Key? key}) : super(key: key);
 
   @override
-  State<SettingsTab> createState() {
-    return _SettingsTabState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'PackageInfo Demo',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const MyHomePage(title: 'PackageInfo example app'),
+      debugShowCheckedModeBanner: false,
+    );
   }
 }
 
-class _SettingsTabState extends State<SettingsTab> {
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key? key, this.title}) : super(key: key);
+
+  final String? title;
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+// @see https://github.com/fluttercommunity/plus_plugins/blob/main/packages/package_info_plus/package_info_plus/example/lib/main.dart
+class _MyHomePageState extends State<MyHomePage> {
   final String _storeVersion = '1.1.0';
 
   PackageInfo _packageInfo = PackageInfo(
@@ -44,7 +60,7 @@ class _SettingsTabState extends State<SettingsTab> {
   }
 
   Widget _infoTile(String title, String subtitle) {
-    return CupertinoListTile(
+    return ListTile(
       title: Text(title),
       subtitle: Text(subtitle.isEmpty ? 'Not set' : subtitle),
     );
@@ -60,6 +76,9 @@ class _SettingsTabState extends State<SettingsTab> {
     print('compare version: ${_storeVersion.compareTo(_packageInfo.version)}');
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title!),
+      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -76,24 +95,27 @@ class _SettingsTabState extends State<SettingsTab> {
                 return;
               }
 
-              showCupertinoDialog(context: context, builder: (context) {
-                return CupertinoAlertDialog(
+              // confirm_dialog - confirm dialog 도 package 를 쓰거나 직접 구성해야 함
+              if (
+              await confirm(
+                  context,
                   title: const Text('알림'),
                   content: const Text('업데이트가 필요합니다.\n스토어로 이동하시겠습니까?'),
-                  actions: [
-                    CupertinoDialogAction(isDefaultAction: false, child: const Text("아니오"), onPressed: () {
-                      Navigator.pop(context);
-                    }),
-                    CupertinoDialogAction(isDefaultAction: true, child: const Text("네"), onPressed: () async {
-                      // url_launcher - https://pub.dev/packages/url_launcher
-                      await launchUrl(Uri.parse('https://flutter.dev'), mode: LaunchMode.externalApplication);
+                  textOK: const Text('네'),
+                  textCancel: const Text('아니오')
+              )
+              ) {
+                // url_launcher - https://pub.dev/packages/url_launcher
+                await launchUrl(Uri.parse('https://flutter.dev'), mode: LaunchMode.externalApplication);
 
-                      // 앱 강제 종료
-                      exit(0);
-                    })
-                  ],
-                );
-              });
+                // 앱 강제 종료
+                if (Platform.isAndroid) {
+                  SystemNavigator.pop();
+                } else if (Platform.isIOS) {
+                  exit(0);
+                }
+                return;
+              }
             },
           ),
         ],
